@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: MSBuild
+        uses: DynamoDS/actions/msbuild@master
+        with:
+          repository: DynamoDS/IssuesTypePredicter
+          dotnet_version: 8.0.x
+          solution_path: IssuesTypePredicter.sln
+          build_configuration: Release
+      - name: Look for binaries
+        run: |
+          if (Test-Path -Path "${{ github.workspace }}\IssuesTypePredicterML.ConsoleApp\bin\Release\net8.0\IssuesTypePredicterML.exe") {
+            Write-Output "IssuesTypePredicterML.exe exists!"
+          } else {
+            Write-Error "IssuesTypePredicterML.exe was not found!"
+          }
+
+          if (Test-Path -Path "${{ github.workspace }}\IssuesTypePredicterML.Model\bin\Release\net8.0\IssuesTypePredicterML.Model.dll") {
+            Write-Output "IssuesTypePredicterML.Model.dll exists!"
+          } else {
+            Write-Error "IssuesTypePredicterML.Model.dll was not found!"
+          }
